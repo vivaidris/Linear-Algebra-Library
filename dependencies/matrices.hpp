@@ -213,3 +213,107 @@ struct Matrix3x3 {
         }
     }
 };
+
+struct Matrix4x4 {
+    float m[4][4];
+
+    // Constructor from 2D array
+    Matrix4x4(float elems[4][4]) {
+        for(int i = 0; i < 4; i++)
+            for(int j = 0; j < 4; j++)
+                m[i][j] = elems[i][j];
+    }
+
+    // Default constructor (identity)
+    Matrix4x4() {
+        for(int i = 0;i<4;i++)
+            for(int j = 0;j<4;j++)
+                m[i][j] = (i==j) ? 1.0f : 0.0f;
+    }
+
+    // Optional: 16-float constructor
+    Matrix4x4(float a00,float a01,float a02,float a03,
+              float a10,float a11,float a12,float a13,
+              float a20,float a21,float a22,float a23,
+              float a30,float a31,float a32,float a33) 
+    {
+        m[0][0]=a00; m[0][1]=a01; m[0][2]=a02; m[0][3]=a03;
+        m[1][0]=a10; m[1][1]=a11; m[1][2]=a12; m[1][3]=a13;
+        m[2][0]=a20; m[2][1]=a21; m[2][2]=a22; m[2][3]=a23;
+        m[3][0]=a30; m[3][1]=a31; m[3][2]=a32; m[3][3]=a33;
+    }
+
+    // Addition
+    Matrix4x4 operator+(const Matrix4x4& other) const {
+        Matrix4x4 result;
+        for(int i=0;i<4;i++)
+            for(int j=0;j<4;j++)
+                result.m[i][j] = m[i][j] + other.m[i][j];
+        return result;
+    }
+
+    // Subtraction
+    Matrix4x4 operator-(const Matrix4x4& other) const {
+        Matrix4x4 result;
+        for(int i=0;i<4;i++)
+            for(int j=0;j<4;j++)
+                result.m[i][j] = m[i][j] - other.m[i][j];
+        return result;
+    }
+
+    // Multiplication
+    Matrix4x4 operator*(const Matrix4x4& other) const {
+        Matrix4x4 result{};
+        for(int i=0;i<4;i++)
+            for(int j=0;j<4;j++) {
+                result.m[i][j] = 0;
+                for(int k=0;k<4;k++)
+                    result.m[i][j] += m[i][k]*other.m[k][j];
+            }
+        return result;
+    }
+
+    // Minor determinant helper (3x3)
+    float minor(int r0,int r1,int r2,int c0,int c1,int c2) const {
+        return m[r0][c0]*(m[r1][c1]*m[r2][c2]-m[r1][c2]*m[r2][c1])
+             - m[r0][c1]*(m[r1][c0]*m[r2][c2]-m[r1][c2]*m[r2][c0])
+             + m[r0][c2]*(m[r1][c0]*m[r2][c1]-m[r1][c1]*m[r2][c0]);
+    }
+
+    // Determinant
+    float determinant() const {
+        return m[0][0]*minor(1,2,3,1,2,3)
+             - m[0][1]*minor(1,2,3,0,2,3)
+             + m[0][2]*minor(1,2,3,0,1,3)
+             - m[0][3]*minor(1,2,3,0,1,2);
+    }
+
+    // Inverse
+    Matrix4x4 inverse() const {
+        float det = determinant();
+        if(det==0) throw std::runtime_error("Matrix not invertible");
+
+        Matrix4x4 inv;
+        for(int i=0;i<4;i++){
+            for(int j=0;j<4;j++){
+                // Compute minor for element (j,i) and apply checkerboard sign
+                int rows[3], cols[3], r=0, c=0;
+                for(int ri=0; ri<4; ri++) if(ri!=i) rows[r++] = ri;
+                for(int ci=0; ci<4; ci++) if(ci!=j) cols[c++] = ci;
+                float cofactor = minor(rows[0],rows[1],rows[2],cols[0],cols[1],cols[2]);
+                inv.m[j][i] = ((i+j)%2==0 ? 1:-1)*cofactor/det; // note transpose
+            }
+        }
+        return inv;
+    }
+
+    // Print
+    void print() const {
+        for(int i=0;i<4;i++){
+            std::cout << "[ ";
+            for(int j=0;j<4;j++)
+                std::cout << m[i][j] << " ";
+            std::cout << "]\n";
+        }
+    }
+};
