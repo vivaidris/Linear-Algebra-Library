@@ -14,7 +14,7 @@ struct Matrix2x2 {
 	}
 
 	Matrix2x2 operator-(const Matrix2x2& other) const {
-		return { a - other.a, b - other.b, c - other.c, d - other.b };
+		return { a - other.a, b - other.b, c - other.c, d - other.d };
 	}
 
 	Matrix2x2 operator*(const Matrix2x2& other) const {
