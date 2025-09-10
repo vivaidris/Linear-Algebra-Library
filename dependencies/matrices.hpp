@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdexcept>
+#include <array>
 
 //1x1 Matrix
 struct Matrix1x1 {
@@ -12,22 +13,27 @@ struct Matrix1x1 {
 
 	Matrix1x1() : a(1) {}
 
+	//Addition Operator
 	Matrix1x1 operator+(const Matrix1x1& other) const {
 		return { a + other.a };
 	}
 
+	//Subtraction Operator
 	Matrix1x1 operator-(const Matrix1x1& other) const {
 		return { a - other.a };
 	}
 
+	//Product Operator
 	Matrix1x1 operator*(const Matrix1x1& other) const {
 		return { a * other.a };
 	}
 
+	//Determinant
 	float determinant() const {
 		return a;
 	}
 
+	//Inverse
 	Matrix1x1 inverse() const {
 		float det = determinant();
 		if(det == 0){
@@ -37,6 +43,7 @@ struct Matrix1x1 {
 		return { invDet };
 	}
 
+	//Print (DEBUG ONLY)
 	void print() const {
         std::cout << "[" << a << "]" << std::endl;
     }
@@ -44,73 +51,84 @@ struct Matrix1x1 {
 
 //2x2 Matrix
 struct Matrix2x2 {
-	// Elements of the matrix
-	float a, b, c, d;
+	//Elements
+	float m[2][2];
 
-	// Matrix Constructor
-	Matrix2x2(float a_, float b_, float c_, float d_)
-		: a(a_), b(b_), c(c_), d(d_) {}
+	//Constructors
+	Matrix2x2(float elems[2][2]){
+		for(int i = 0; i < 2; i++){
+			for(int j = 0; j < 2; j++){
+				m[i][j] = elems[i][j];
+			}
+		}
+	}
 
-	Matrix2x2() : a(1), b(0), c(0), d(1) {}
+	Matrix2x2() {
+		m[0][0] = 1; m[0][1] = 0;
+		m[1][0] = 0; m[1][1] = 1;
+	}
 
-	// Matrix Addition
+	//Float Support (DO NOT REMOVE)
+	Matrix2x2(float a, float b, float c, float d) {
+        m[0][0] = a; m[0][1] = b;
+        m[1][0] = c; m[1][1] = d;
+    }
+
+	//Addition / Subtraction / Product Operators
 	Matrix2x2 operator+(const Matrix2x2& other) const {
-		return { a + other.a, b + other.b, c + other.c , d + other.d };
-	}
+		Matrix2x2 result;
+		for(int i=0;i<2;i++)
+			for(int j=0;j<2;j++)
+				result.m[i][j] = m[i][j] + other.m[i][j];
+		return result;
+	}	
 
-	// Matrix Subtraction
 	Matrix2x2 operator-(const Matrix2x2& other) const {
-		return { a - other.a, b - other.b, c - other.c, d - other.d };
+		Matrix2x2 result;
+		for(int i=0;i<2;i++)
+			for(int j=0;j<2;j++)
+				result.m[i][j] = m[i][j] - other.m[i][j];
+		return result;
 	}
 
-	// Matrix Multiplication
 	Matrix2x2 operator*(const Matrix2x2& other) const {
-		return {
-			a * other.a + b * other.c,
-			a * other.b + b * other.d,
-			c * other.a + d * other.c,
-			c * other.b + d * other.d
-		};
+		Matrix2x2 result{};
+		for(int i=0;i<2;i++)
+			for(int j=0;j<2;j++) {
+				result.m[i][j] = 0;
+				for(int k=0;k<2;k++)
+					result.m[i][j] += m[i][k] * other.m[k][j];
+			}
+		return result;
 	}
 
-	// Matrix-Vector Multiplication
-	std::pair<float, float> operator*(const std::pair<float, float>& vec) const {
-		return {
-			a * vec.first + b * vec.second,
-			c * vec.first + d * vec.second
-		};
-	}
-
-	// Determinant
+	// Determinant and Inverse
 	float determinant() const {
-		return a * d - b * c;
+		return m[0][0]*m[1][1] - m[0][1]*m[1][0];
 	}
 
-	// Inverse
 	Matrix2x2 inverse() const {
 		float det = determinant();
-		if (det == 0) {
-			throw std::runtime_error("Matrix is not invertible");
-		}
-		float invDet = 1.0f / det;
-		return {
-			d * invDet,
-			-b * invDet,
-			-c * invDet,
-			a * invDet
+		if(det == 0) throw std::runtime_error("Matrix not invertible");
+		return Matrix2x2{ 
+			m[1][1]/det,
+			-m[0][1]/det,
+        	-m[1][0]/det,
+			m[0][0]/det
 		};
+
 	}
 
-	// Transpose
-	Matrix2x2 transpose() const {
-		return { a, c, b, d };
-	}
-
-	// Print (DEBUGGING PURPOSES)
+	//Print (DEBUG ONLY)
 	void print() const {
-		std::cout << "[" << a << "," << b << "]" << std::endl
-			      << "[" << c << "," << d << "]" << std::endl;
-	}
+        for(int i=0;i<2;i++){
+            std::cout << "[ ";
+            for(int j=0;j<2;j++)
+                std::cout << m[i][j] << " ";
+            std::cout << "]\n";
+        }
+    }
+
 };
 
 struct Matrix3x3 {
@@ -123,13 +141,13 @@ struct Matrix3x3 {
                 m[i][j] = elems[i][j];
     }
 
-    Matrix3x3() { // Identity
+    Matrix3x3() {
         m[0][0] = 1; m[0][1] = 0; m[0][2] = 0;
         m[1][0] = 0; m[1][1] = 1; m[1][2] = 0;
         m[2][0] = 0; m[2][1] = 0; m[2][2] = 1;
     }
 
-    // Addition
+    // Addition / Subtraction / Product Operators
     Matrix3x3 operator+(const Matrix3x3& other) const {
         Matrix3x3 result;
         for(int i=0;i<3;i++)
@@ -138,7 +156,6 @@ struct Matrix3x3 {
         return result;
     }
 
-    // Subtraction
     Matrix3x3 operator-(const Matrix3x3& other) const {
         Matrix3x3 result;
         for(int i=0;i<3;i++)
@@ -147,7 +164,6 @@ struct Matrix3x3 {
         return result;
     }
 
-    // Multiplication
     Matrix3x3 operator*(const Matrix3x3& other) const {
         Matrix3x3 result{};
         for(int i=0;i<3;i++) {
@@ -160,7 +176,7 @@ struct Matrix3x3 {
         return result;
     }
 
-    // Determinant
+    // Determinant and Inverse
     float determinant() const {
         return 
             m[0][0]*(m[1][1]*m[2][2]-m[1][2]*m[2][1]) -
@@ -168,7 +184,6 @@ struct Matrix3x3 {
             m[0][2]*(m[1][0]*m[2][1]-m[1][1]*m[2][0]);
     }
 
-    // Inverse
     Matrix3x3 inverse() const {
         float det = determinant();
         if(det == 0) throw std::runtime_error("Matrix is not invertible");
@@ -188,7 +203,7 @@ struct Matrix3x3 {
         return inv;
     }
 
-    // Print
+    // Print (DEBUG ONLY)
     void print() const {
         for(int i=0;i<3;i++){
             std::cout << "[ ";
