@@ -1,27 +1,46 @@
 #include "dependencies/matrices.hpp"
 
 int main() {
-    Matrix2x2 m1(1, 2, 3, 4);
-    Matrix2x2 m2(5, 6, 7, 8);
 
-    auto sum = m1 + m2;
-    auto diff = m1 - m2;
-    auto prod = m1 * m2;
-    auto det = m1.determinant();
-    auto trans = m1.transpose();
+    // 2x2 Matrix Test (Uncomment To Test)
+    //Matrix2x2 a(1, 2, 3, 4);
+    //Matrix2x2 b(5, 6, 7, 8);
 
-    sum.print();
-    diff.print();
-    prod.print();
+    //Matrix2x2 c = a + b;
+    //Matrix2x2 d = a * b;
+    //float detA = a.determinant();
+    //Matrix2x2 invA = a.inverse();
 
-    std::cout << "Determinant: " << det << "\n";
+    //std::cout << "A + B:\n"; c.print();
+    //std::cout << "A * B:\n"; d.print();
+    //std::cout << "det(A): " << detA << "\n";
+    //std::cout << "inv(A):\n"; invA.print();
 
-    auto inv = m1.inverse();
-    inv.print();
+    //3x3 Matrix Test (Uncomment To Test)
+    //Matrix3x3 a(1,2,3,4,5,6,7,8,10);  // intentional 10 to make det != 0
+    //Matrix3x3 b(10,11,12,13,14,15,16,17,18);
 
-    auto vec = std::make_pair(1.0f, 1.0f);
-    auto resultVec = m1 * vec;
-    std::cout << "Vector multiplication result: (" << resultVec.first << ", " << resultVec.second << ")\n";
+    //Matrix3x3 c = a + b;
+    //Matrix3x3 d = a * b;
+    //float detA = a.determinant();
+    //Matrix3x3 invA = a.inverse();
 
-    return 0;
+    //std::cout << "3x3 A + B:\n"; c.print();
+    //std::cout << "3x3 A * B:\n"; d.print();
+    //std::cout << "3x3 det(A): " << detA << "\n";
+    //std::cout << "3x3 inv(A):\n"; invA.print();
+
+    //4x4 Matrix (Uncomment To Test)
+    //Matrix4x4 a(1,2,3,4,5,6,7,8,11,10,11,12,13,14,15,19);
+    //Matrix4x4 b(2,3,5,7,9,11,13,17,19,23,29,31,37,39,41,43);
+
+    //Matrix4x4 c = a + b;
+    //Matrix4x4 d = a * b;
+    //float detA = a.determinant();
+    //Matrix4x4 invA = a.inverse();
+
+    //std::cout << "4x4 A + B:\n"; c.print();
+    //std::cout << "4x4 A * B:\n"; d.print();
+    //std::cout << "4x4 det(A): " << detA << '\n';
+    //std::cout << "4x4 inv(A):\n"; invA.print();
 }

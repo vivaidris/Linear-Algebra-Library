@@ -134,6 +134,14 @@ struct Matrix2x2 {
 struct Matrix3x3 {
     float m[3][3];
 
+    Matrix3x3(float a11, float a12, float a13,
+              float a21, float a22, float a23,
+              float a31, float a32, float a33) {
+        m[0][0] = a11; m[0][1] = a12; m[0][2] = a13;
+        m[1][0] = a21; m[1][1] = a22; m[1][2] = a23;
+        m[2][0] = a31; m[2][1] = a32; m[2][2] = a33;
+    }
+
     // Constructors
     Matrix3x3(float elems[3][3]) {
         for(int i = 0; i < 3; ++i)
